@@ -15,7 +15,7 @@ __pycache__/
 testcases
 frontend\node_modules
 frontend\dist
-
+venv/
 
 # Ignore build artifacts
 build
