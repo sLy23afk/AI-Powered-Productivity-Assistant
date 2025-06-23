@@ -1,0 +1,43 @@
+
+node_modules
+app\__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+
+# Ignore Python virtual environments
+.venv
+.env
+.vscode
+testcases
+frontend\node_modules
+frontend\dist
+
+
+# Ignore build artifacts
+build
+versions
+*.db
+
+env/
+.idea
+
+# React/Node
+node_modules/
+build/
+dist/
+.vite/
+.env.*
+
+# Flask/Secrets
+*.env
+*.key
+instance/
+config.py
+
+# OS junk
+Thumbs.db
+.DS_Store

@@ -1,0 +1,42 @@
+/* TaskModalNew.css */
+
+.glass-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(30, 30, 30, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+  }
+  
+  .glass-modal {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 20px;
+    width: 400px;
+    margin: auto;
+    margin-top: 10%;
+    color: #fff;
+    font-family: "Segoe UI", sans-serif;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .close-btn {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: #ffffff22;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .close-btn:hover {
+    background-color: #ffffff33;
+  }
+  
