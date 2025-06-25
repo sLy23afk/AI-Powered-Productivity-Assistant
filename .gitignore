@@ -16,7 +16,9 @@ testcases
 frontend\node_modules
 frontend\dist
 venv/
-
+frontend/.env
+frontend/cache
+frontend/.cache
 # Ignore build artifacts
 build
 versions
