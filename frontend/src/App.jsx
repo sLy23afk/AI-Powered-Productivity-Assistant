@@ -12,15 +12,6 @@ import Aurora from '../Reactbits/Aurora/Aurora';
 import SplitText from '../Reactbits/SplitText/SplitText';
 
 
-
-
-
-
-
-
-
-
-
 function App() {
   const [token, setToken] = useState(null);
   const homeRef = useRef(null);

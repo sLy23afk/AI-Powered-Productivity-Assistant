@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
-import { fetchAnalyticsOverview } from "../services/api";
+import { fetchAnalyticsOverview, fetchTasks } from "../services/api";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import axios from "axios";
 import TaskCalendar from "./TaskCalendar";
 import TaskForm from "./TaskForm";
-
-const API = import.meta.env.VITE_REACT_APP_BACKEND_URL ? `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api` : "http://localhost:5000/";
 
 const Dashboard = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -14,14 +11,12 @@ const Dashboard = ({ user, onLogout }) => {
 
   useEffect(() => {
     // Fetch tasks on component mount
-    fetchTasks();
+    fetchTasksFromApi();
   }, []);
 
-  const fetchTasks = async () => {
+  const fetchTasksFromApi = async () => {
     try {
-      const response = await axios.get(`${API}tasks`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await fetchTasks();
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -223,7 +218,7 @@ const Dashboard = ({ user, onLogout }) => {
     </div>
   );
 };
-
+export default Dashboard;
 
 // const Dashboard = () => {
 //     const [data, setData] = useState(null);
