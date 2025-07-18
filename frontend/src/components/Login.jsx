@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+const API = `${BACKEND_URL}/api`;
 
 function Login({ setToken }) {
   const [email, setEmail] = useState("");
@@ -10,24 +12,22 @@ function Login({ setToken }) {
   const [regPassword, setRegPassword] = useState("");
   const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [regMessage, setRegMessage] = useState("");
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await axios.post(`${API}/auth/login`, {
         email,
         password,
       });
       console.log("Login response:", response);
-      const { access_token } = response.data;
-      if (!access_token) {
+      const { token } = response.data;
+      if (!token) {
         alert("Login failed: No access token received");
         return;
       }
-      setToken(access_token);
-      localStorage.setItem("token", access_token);
-      navigate("/"); // Redirect to home after login
+      setToken(token);
+      localStorage.setItem("token", token);
     } catch (error) {
       console.error("Login failed", error);
       console.error("Full error object:", error);
@@ -47,7 +47,7 @@ function Login({ setToken }) {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
+      const response = await axios.post(`${API}/auth/register`, {
         username: regUsername,
         email: regEmail,
         password: regPassword,

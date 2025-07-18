@@ -26,9 +26,8 @@ export const deleteTask = (id) => api.delete(`tasks/${id}`);
 // Analytics APIs
 export const fetchAnalyticsOverview = () => api.get("analytics/overview");
 export const fetchWeeklyTaskDistribution = () => api.get("analytics/weekly_task_distribution");
-// // Auth APIs
-// export const login = (credentials) => api.post("auth/login", credentials);
-// export const register = (userData) => api.post("auth/register", userData);
+export const login = (credentials) => api.post("auth/login", credentials);
+export const register = (userData) => api.post("auth/register", userData);
 
 
 

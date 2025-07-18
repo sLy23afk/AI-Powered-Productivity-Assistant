@@ -42,6 +42,7 @@ const TaskCalendar = () => {
 
   return (
     <>
+    <div className = "calendar-design">
       <Calendar onClickDay={handleDateClick} />
       {modalOpen && (
         <TaskModal
@@ -52,6 +53,7 @@ const TaskCalendar = () => {
           onDelete={handleDelete}
         />
       )}
+      </div>
     </>
   );
 };

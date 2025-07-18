@@ -1,23 +1,33 @@
-#root {
-  width: 100vw;
-  height: 100vh;
+/* Reset and Base Styles */
+* {
   margin: 0;
   padding: 0;
-  background-color: #000000;
-  color: #e0e0e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  box-sizing: border-box;
 }
 
+.App {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Aurora Background Container */
+.app-container {
+  position: relative;
+  width: 100%;
+  top: 0%;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f2ff 25%, #f8faff 50%, #e6f0ff 75%, #f2f6ff 100%);
+  overflow-y: hidden;
+}
+
+/* Aurora Gradient Effects */
 .aurora-bg {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: 100vh;
   z-index: 1;
 }
 
@@ -26,14 +36,14 @@
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.6;
-  animation: float 20s ease-in-out infinite;
+  animation: float 5s ease-in-out infinite;
 }
 
 .aurora-1 {
   width: 400px;
   height: 400px;
   background: linear-gradient(45deg, #a78bfa, #c084fc, #e879f9);
-  top: -10%;
+  bottom: -120%;
   left: -10%;
   animation-delay: 0s;
 }
@@ -42,7 +52,7 @@
   width: 600px;
   height: 600px;
   background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
-  top: 30%;
+  bottom: -80%;
   right: -15%;
   animation-delay: -7s;
 }
@@ -55,6 +65,16 @@
   left: 20%;
   animation-delay: -14s;
 }
+.aurora-4 {
+  width: 500px;
+  position: absolute;
+  height: 600px;
+  background: linear-gradient(45deg, #f59e0b, #f97316, #ea580c);
+  bottom: -179%;
+  right: 10%;
+  animation-delay: -15s;
+}
+
 
 @keyframes float {
   0%, 100% {
@@ -71,34 +91,17 @@
   }
 }
 
-/* .aurora-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  margin: auto;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-} */
-
-
-.app-container {
-  max-width: 900px;
-  width: 100%;
+/* Main Content */
+.main-content {
+  position: relative;
+  z-index: 2;
   min-height: 100vh;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: transparent;
-  border-radius: 0;
-  box-shadow: none;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  position: relative;
-  z-index: 1;
-  color: #e0e0e0;
+  backdrop-filter: blur(1px);
 }
 
+/* Header Styles */
 .app-header {
   padding: 4rem 2rem;
   text-align: center;
@@ -163,37 +166,17 @@
     transform: scale(1.1);
   }
 }
-@keyframes glow {
-  0% {
-    opacity: 1;
-    text-shadow: rgba(255, 7, 7, 0.979), rgb(231, 9, 9);
-  }
-  50% {
-    opacity: 2;
-    text-shadow: 0 0 1px rgb(255, 255, 255), 0 0 3px rgba(60, 20, 238, 0.7);
-  }
-}
 
 .app-title {
-  text-transform: uppercase;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 800;
-  color:#ffffff;
-  text-box: linear-gradient(45deg, #f59e0b, #f97316, #ef4444);
-  background-clip: text;
+  background: linear-gradient(135deg, #1e293b, #334155, #475569);
   -webkit-background-clip: text;
-  color: transparent;
-  margin-bottom: 0.3rem;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  animation: glow 3s ease-in-out infinite;
-}
-
-.app-title-glow {
-  animation : glow 4s ease-in-out infinite;
-  text-shadow: 0 0 3px rgba(255, 255, 255, 0.8), 
-               0 0 6px rgba(252, 61, 220, 0.5), 
-               0 0 9px rgba(60, 20, 238, 0.3);         
 }
 
 .app-subtitle {
@@ -204,22 +187,6 @@
   line-height: 1.6;
 }
 
-/* .app-header {
-  padding: 2rem;
-  text-align: center;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
-.main-content {
-  position: relative;
-  z-index: 2;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  backdrop-filter: blur(1px);
-}
 /* Features Section */
 .features-section {
   padding: 2rem;
@@ -293,17 +260,68 @@
   font-weight: 500;
 }
 
-.app-nav {
-  /* display: flex; */
-  opacity: 1;
-  justify-content: center;
-  align-items: center;
-  /* flex-wrap: wrap; */
-  gap: 3rem;
-  margin-bottom: 3rem;
+/* Dropdown Styles */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
-/*cta section*/
 
+.dropdown-toggle {
+  background-color: #6366f1;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  background-color: #4f46e5;
+}
+
+.dropdown-list {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 0.25rem;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0ff;
+}
+
+
+/* CTA Section */
 .cta-section {
   text-align: center;
   padding: 2rem;
@@ -355,46 +373,180 @@
   transform: translateX(100%);
 }
 
-.react-calendar {
-  width: 100% !important;
-  max-width: 900px;
-  opacity: transparent;
-  background:transparent;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 1rem;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  color: #020101;
-}
-
-.react-calendar__tile {
-  max-height: 80px !important;
-  overflow: auto;
+.auth-links {
+  color: #64748b;
   font-size: 0.9rem;
-  padding: 0.3rem !important;
-  color: #fff7f7;
+  margin-top: 1rem;
 }
 
-.react-calendar__tile--now {
-  background: #444;
-  color: #c4c93e;
-  border-radius: 6px;
+.link-button {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  margin: 0 0.25rem;
+  transition: color 0.2s ease;
 }
 
-.react-calendar__tile--active {
-  background: #ffffff;
-  color: rgb(0, 0, 0);
-  border-radius: 6px;
+.link-button:hover {
+  color: #4f46e5;
+}
+
+/* Authentication Styles */
+.auth-container {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.1),
+    0 8px 20px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: #475569;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.auth-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.auth-submit-button {
+  position: relative;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.auth-submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+.auth-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
 /* Dashboard Styles */
 .dashboard-container {
-  position: relative;
+  position: absolute;
   z-index: 2;
-  min-height: 100vh;
-  padding: 2rem;
+  align-items: center;
+  flex-direction: column;
+  min-width: 100vh;
+  padding: 3rem;
+  justify-content: center;
+  /* overflow-y: auto; */
 }
 
 .dashboard-header {
@@ -517,6 +669,7 @@
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .add-task-button {
@@ -647,6 +800,15 @@
   justify-content: center;
 }
 
+.calendar-design {
+ color:#059669;
+ display: grid;
+ backdrop-filter: blur(20px);
+ flex: wrap;
+ padding: 2rem;
+ animation: pulse 2 sec; 
+
+}
 .calendar-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
@@ -921,21 +1083,4 @@
   * {
     transition: none !important;
   }
-}
-input, button {
-  font-size: 1rem;
-}
-
-button {
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.432);
-  color: rgb(252, 61, 220);
-  border: #c4c93e;
-  padding: 0.6em 1.2em;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #535bf2;
 }

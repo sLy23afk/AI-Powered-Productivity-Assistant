@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_smorest import Api
 from flask_cors import CORS
@@ -30,9 +30,23 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']  # Use SECRET_KEY from config.py for JWT
     app.config['JWT_TOKEN_LOCATION'] = ['headers']
 
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, methods=["GET", "POST", "PATCH", "OPTIONS"])
+    CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"]}}, supports_credentials=True, methods=["GET", "POST", "PATCH", "OPTIONS"])
     migrate.init_app(app, db)
     jwt.init_app(app)
+
+    @app.after_request
+    def after_request(response):
+        # Remove manual addition of Access-Control-Allow-Origin to avoid duplicates
+        # flask_cors.CORS will handle CORS headers automatically
+        # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,DELETE,PATCH,OPTIONS')
+        if request.method == 'OPTIONS':
+            # Return response immediately for OPTIONS requests without authentication
+            response.status_code = 200
+            response.data = ''
+            return response
+        return response
 
     from app.models import Task
 

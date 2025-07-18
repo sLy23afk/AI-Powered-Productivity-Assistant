@@ -17,17 +17,23 @@ class UserRegister(MethodView):
         if User.query.filter_by(email=user_data['email']).first():
             abort(400, message="Email already registered")
             
+        if User.query.filter_by(username=user_data['username']).first():
+            abort(400, message="Username already exists")
+            
         new_user = User(
             username=user_data['username'],
             email=user_data['email']    
         )
-        if User.query.filter_by(username=user_data['username']).first():
-            abort(400, message="Username already exists")
-            
         new_user.set_password(user_data['password'])
         db.session.add(new_user)
         db.session.commit()
-        return {"message": "User registered successfully"}, 201
+        token = create_access_token(identity=str(new_user.id))
+        user_info = {
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email
+        }
+        return {"token": token, "user": user_info}, 201
     
 @blp.route("/login")
 class Login(MethodView):
@@ -42,7 +48,12 @@ class Login(MethodView):
         user = User.query.filter_by(email=user_data['email']).first()
         if user and user.check_password(user_data['password']):
             token = create_access_token(identity=str(user.id))
-            return {"access_token": token}, 200 
+            user_info = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email
+            }
+            return {"token": token, "user": user_info}, 200 
         else:
             abort(401, message="Invalid email or password")
 
@@ -61,6 +72,3 @@ class Profile(MethodView):
             abort(404, message="User not found")
         
         return user
-    
-    
-    

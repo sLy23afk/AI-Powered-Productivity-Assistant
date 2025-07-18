@@ -1,181 +1,501 @@
-import './index.css';
-import './App.css';
-import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { gsap } from 'gsap';
-import TaskForm from './components/TaskForm';
-import TaskCalendar from './components/TaskCalendar';
-import Dashboard from './components/Dashboard';
-import Login from './components/Login';
-import { createTask } from './services/api';
-import Aurora from '../Reactbits/Aurora/Aurora';
-import SplitText from '../Reactbits/SplitText/SplitText';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import TaskCalendar from "./components/TaskCalendar"
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const API = `${BACKEND_URL}`;
 
-function App() {
-  const [token, setToken] = useState(null);
-  const homeRef = useRef(null);
-  const dashboardRef = useRef(null);
-
-  const handleAnimationComplete = () => {
-    console.log('All letters have animated!');
-  };
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
-
-  const handleLogin = (token) => {
-    localStorage.setItem('token', token);
-    setToken(token);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-  };
-
-  const [tasks, setTasks] = useState([]);
-
-  const handleCreate = async (taskData) => {
-    try {
-      const response = await createTask(taskData);
-    } catch (error) {
-      console.error("Task creation failed", error);
-      alert("Failed to create task. Please try again.");
-    }
-  };
-
-  const animateHoverIn = (ref) => {
-    if (!ref.current) return;
-    const chars = ref.current.querySelectorAll('.split-parent > *');
-    gsap.to(chars, {
-      y: -10,
-      opacity: 1,
-      stagger: 0.05,
-      duration: 0.3,
-      ease: 'power3.out',
-    });
-  };
-
-  const animateHoverOut = (ref) => {
-    if (!ref.current) return;
-    const chars = ref.current.querySelectorAll('.split-parent > *');
-    gsap.to(chars, {
-      y: 0,
-      opacity: 1,
-      stagger: 0.05,
-      duration: 0.3,
-      ease: 'power3.out',
-    });
-  };
-
+// Landing Page Component
+function LandingPage({ onShowAuth }) {
   return (
-    <>
+    <div className="app-container" style = {{}}>
+      {/* Aurora Background */}
       <div className="aurora-bg">
-        <div className="main-content"></div>
         <div className="aurora-gradient aurora-1"></div>
         <div className="aurora-gradient aurora-2"></div>
         <div className="aurora-gradient aurora-3"></div>
+        <div className="aurora-gradient aurora-4"></div>
       </div>
-      {/* <div className="aurora-container">
-        <Aurora
-          colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
-          blend={0.6}
-          amplitude={1.0}
-          speed={0.5}
-        /> */}
-  
-      <Router>
-        <div className="app-container">
-          <header className="app-header">
-            <div className="header-content">
-              <div className="logo-container">
-                  <img 
-                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" 
-                    alt="Logo"
-                    className="logo-img"
-                  />
+      
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="app-header">
+          <div className="header-content">
+            <div className="logo-container">
+              <img 
+                src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" 
+                alt="Logo"
+                className="logo-img"
+              />
               <div className="logo-glow"></div>
-              </div>
-              <h1 className="app-title" style = {{ justifyContent: "center", alignItems: "center"}}>
-                <div className="app-title-glow">
-                <SplitText
-                  text= " AI Productivity Assistant"
-                  className="text-2xl font-semibold text-center"
-                  delay={120}
-                  duration={0.6}
-                  ease="power3.out"
-                  splitType="chars"
-                  from={{ opacity: 0, y: 40 }}
-                  to={{ opacity: 1, y: 0 }}
-                  threshold={0.1}
-                  rootMargin="-10px"
-                  textAlign="right"
-                  onLetterAnimationComplete={handleAnimationComplete}
-                />
-                </div>
-              </h1>
-              <p className="app-subtitle">Supercharge your productivity with intelligent task management</p>
             </div>
-          </header>
-          <nav className="app-nav">
-            <Link
-              to="/">
-            
+            <h1 className="app-title">AI Productivity Assistant</h1>
+            <p className="app-subtitle">Supercharge your productivity with intelligent task management</p>
+          </div>
+        </header>
+
+        {/* Feature Cards */}
+        <div className="features-section">
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon">🧠</div>
+              <h3>AI Task Analysis</h3>
+              <p>Smart suggestions and insights for your tasks</p>
+            </div>
             <div className="feature-card">
               <div className="feature-icon">📅</div>
               <h3>Smart Scheduling</h3>
               <p>Intelligent calendar integration and planning</p>
             </div>
-            </Link>
-            <Link
-              to="/dashboard"
-              onMouseEnter={() => animateHoverIn(dashboardRef)}
-              onMouseLeave={() => animateHoverOut(dashboardRef)}
-            >
-              <div className="feature-card">
+            <div className="feature-card">
               <div className="feature-icon">📊</div>
               <h3>Analytics Dashboard</h3>
               <p>Track progress and productivity metrics</p>
             </div>
-            </Link>
-            {token ? (
-              <button onClick={handleLogout}>🚪 Logout</button>
-            ) : (
-              <Link to="/login">
-                <div className="cta-section">
-                  <button className="cta-button">
-                    <span>Get Started</span>
-                    <div className="button-glow"></div>
-                  </button>
-                </div>
-              </Link>
-            )}
-          </nav>
-
-          <Routes>
-            <Route
-              path="/"
-              element={
-                token ? (
-                  <>
-                    <TaskForm onCreate={handleCreate} />
-                    <TaskCalendar />
-                  </>
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login setToken={handleLogin} />} />
-          </Routes>
+            <div className="feature-card">
+              <div className="feature-icon">⚡</div>
+              <h3>Real-time Sync</h3>
+              <p>Seamless synchronization across devices</p>
+            </div>
+          </div>
         </div>
-      </Router>
+
+        {/* CTA Section */}
+        <div className="cta-section">
+          <button className="cta-button" onClick={() => onShowAuth('login')}>
+            <span>Get Started</span>
+            <div className="button-glow"></div>
+          </button>
+          <p className="auth-links">
+            Already have an account? 
+            <button className="link-button" onClick={() => onShowAuth('login')}>Sign In</button> | 
+            <button className="link-button" onClick={() => onShowAuth('register')}>Create Account</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Authentication Component
+function AuthForm({ mode, onBack, onLogin }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: mode === 'register' ? '' : undefined
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
+      const response = await axios.post(`${API}${endpoint}`, formData);
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        onLogin(response.data.user);
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert(error.response?.data?.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  return (
+    <div className="app-container">
+      <div className="aurora-bg">
+        <div className="aurora-gradient aurora-1"></div>
+        <div className="aurora-gradient aurora-2"></div>
+        <div className="aurora-gradient aurora-3"></div>
+      </div>
+      
+      <div className="auth-container">
+        <div className="auth-card">
+          <button className="back-button" onClick={onBack}>
+            ← Back
+          </button>
+          
+          <div className="auth-header">
+            <h2 className="auth-title">
+              {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+            </h2>
+            <p className="auth-subtitle">
+              {mode === 'login' 
+                ? 'Sign in to access your productivity dashboard' 
+                : 'Join thousands of productive users'
+              }
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {mode === 'register' && (
+              <div className="form-group">
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name || ''}
+                  onChange={handleChange}
+                  required
+                  className="form-input"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            )}
+            
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your email"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your password"
+                minLength={6}
+              />
+            </div>
+
+            <button type="submit" className="auth-submit-button" disabled={loading}>
+              {loading ? (
+                <span className="loading-spinner">⏳</span>
+              ) : (
+                <span>{mode === 'login' ? 'Sign In' : 'Create Account'}</span>
+              )}
+              <div className="button-glow"></div>
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <p>
+              {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+              <button 
+                className="link-button"
+                onClick={() => window.location.reload()}
+              >
+                {mode === 'login' ? 'Sign Up' : 'Sign In'}
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Dashboard Component
+function Dashboard({ user, onLogout }) {
+  const [activeTab, setActiveTab] = useState('tasks');
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [fetchingTasks, setFetchingTasks] = useState(false);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!user) return;
+      setFetchingTasks(true);
+      try {
+        const response = await axios.get(`${API}/tasks`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        alert('Failed to fetch tasks');
+      } finally {
+        setFetchingTasks(false);
+      }
+    };
+    fetchTasks();
+  }, [user]);
+
+  const addTask = async (e) => {
+    e.preventDefault();
+    if (!newTask.trim()) {
+      alert("Task title cannot be empty.");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/tasks`, 
+        { title: newTask },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      const { id, title, due_date, priority, status, suggestion } = response.data;
+      const filteredTask = { id, title, due_date, priority, status };
+      setTasks(prev => [filteredTask, ...prev]);
+      setNewTask('');
+    } catch (error) {
+      console.error('Error adding task:', error);
+      alert(error.response?.data?.message || 'Failed to add task');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleTask = async (taskId, completed) => {
+    try {
+      await axios.patch(`${API}/tasks/${taskId}`, 
+        { completed: !completed },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      setTasks(prev => prev.map(task => 
+        task.id === taskId ? { ...task, completed: !completed } : task
+      ));
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+  const stats = {
+    total: tasks.length,
+    completed: tasks.filter(t => t.completed).length,
+    pending: tasks.filter(t => !t.completed).length,
+    completionRate: tasks.length > 0 ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100) : 0
+  };
+
+  return (
+    <div className="app-container" style={{ overflowY: 'auto' }}>
+      <div className="aurora-bg">
+        <div className="aurora-gradient aurora-1"></div>
+        <div className="aurora-gradient aurora-2"></div>
+        <div className="aurora-gradient aurora-3"></div>
+        <div className="aurora-gradient aurora-4"></div>
+      </div>
+      
+      <div className="dashboard-container" style={{ top: '0', left: '0' }}>
+        {/* Header */}
+        <header className="dashboard-header">
+          <div className="dashboard-nav">
+            <h1 className="dashboard-title">Welcome back, {user.name}!</h1>
+            <button className="logout-button" onClick={onLogout}>
+              Logout
+            </button>
+          </div>
+          
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button 
+              className={`tab-button ${activeTab === 'tasks' ? 'active' : ''}`}
+              onClick={() => setActiveTab('tasks')}
+            >
+              📝 Tasks
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
+              onClick={() => setActiveTab('calendar')}
+            >
+              📅 Calendar
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'analytics' ? 'active' : ''}`}
+              onClick={() => setActiveTab('analytics')}
+            >
+              📊 Analytics
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="dashboard-main">
+          {activeTab === 'tasks' && (
+            <div className="tasks-section">
+              {/* Add Task Form */}
+              <div className="add-task-card">
+                <h3>Add New Task</h3>
+                <form onSubmit={addTask} className="add-task-form">
+                  <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="What would you like to accomplish?"
+                    className="task-input"
+                    disabled={loading}
+                  />
+                  <button type="submit" className="add-task-button" disabled={loading}>
+                    {loading ? '⏳' : '➕'} Add Task
+                  </button>
+                </form>
+              </div>
+
+              {/* Tasks List */}
+              <div className="tasks-grid">
+                {tasks.length === 0 ? (
+                  <div className="empty-state">
+                    <div className="empty-icon">📋</div>
+                    <h3>No tasks yet</h3>
+                    <p>Add your first task to get started with AI-powered productivity!</p>
+                  </div>
+                ) : (
+                  tasks.map(task => (
+                    <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''}`}>
+                      <div className="task-content">
+                        <button
+                          className="task-checkbox"
+                          onClick={() => toggleTask(task.id, task.completed)}
+                        >
+                          {task.completed ? '✅' : '⏳'}
+                        </button>
+                        <div className="task-details">
+                          <h4 className="task-title">{task.title}</h4>
+                          <p className="task-meta">
+                            Created: {new Date(task.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="task-ai-suggestion">
+                        <div className="dropdown-container">
+                          <button className="dropdown-toggle" onClick={() => setIsOpen(!isOpen)}>
+                            💡 AI Suggestions {isOpen ? '▲' : '▼'}
+                          </button>
+                          {isOpen && (
+                            <ul className="dropdown-list">
+                              {suggestions.map((suggestion, index) => (
+                                <li key={index} className="dropdown-item">
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                  </div>
+                ))
+              )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'calendar' && (
+            <div className="calendar-section">
+              <TaskCalendar />
+             </div>
+           )}
+          {activeTab === 'analytics' && (
+            <div className="analytics-section">
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon">📊</div>
+                  <div className="stat-content">
+                    <h3>{stats.total}</h3>
+                    <p>Total Tasks</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">✅</div>
+                  <div className="stat-content">
+                    <h3>{stats.completed}</h3>
+                    <p>Completed</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">⏳</div>
+                  <div className="stat-content">
+                    <h3>{stats.pending}</h3>
+                    <p>Pending</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">🎯</div>
+                  <div className="stat-content">
+                    <h3>{stats.completionRate}%</h3>
+                    <p>Completion Rate</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="analytics-charts">
+                <div className="chart-card">
+                  <h3>📈 Productivity Trends</h3>
+                  <div className="chart-placeholder">
+                    <div className="chart-bars">
+                      <div className="bar" style={{height: '60%'}}></div>
+                      <div className="bar" style={{height: '80%'}}></div>
+                      <div className="bar" style={{height: '45%'}}></div>
+                      <div className="bar" style={{height: '90%'}}></div>
+                      <div className="bar" style={{height: '75%'}}></div>
+                      <div className="bar" style={{height: '85%'}}></div>
+                      <div className="bar" style={{height: '70%'}}></div>
+                    </div>
+                    <p>Weekly productivity overview</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [view, setView] = useState('landing'); // 'landing', 'auth', 'dashboard'
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
+  const [user, setUser] = useState(null);
+
+  const handleShowAuth = (mode) => {
+    setAuthMode(mode);
+    setView('auth');
+  };
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setView('dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setView('landing');
+  };
+
+  const handleBack = () => {
+    setView('landing');
+  };
+
+  return (
+    <>
+      {view === 'landing' && <LandingPage onShowAuth={handleShowAuth} />}
+      {view === 'auth' && <AuthForm mode={authMode} onBack={handleBack} onLogin={handleLogin} />}
+      {view === 'dashboard' && user && <Dashboard user={user} onLogout={handleLogout} />}
     </>
   );
 }
