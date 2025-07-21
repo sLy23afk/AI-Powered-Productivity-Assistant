@@ -3,8 +3,6 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import TaskCalendar from "./components/TaskCalendar"
-import { fetchAnalyticsOverview } from "./services/api";
-import Login from "./components/Login";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const API = `${BACKEND_URL}`;
@@ -12,7 +10,7 @@ const API = `${BACKEND_URL}`;
 // Landing Page Component
 function LandingPage({ onShowAuth }) {
   return (
-    <div className="app-container">
+    <div className="app-container" style = {{}}>
       {/* Aurora Background */}
       <div className="aurora-bg">
         <div className="aurora-gradient aurora-1"></div>
@@ -82,7 +80,141 @@ function LandingPage({ onShowAuth }) {
   );
 }
 
+// Authentication Component
+function AuthForm({ mode, onBack, onLogin }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: mode === 'register' ? '' : undefined
+  });
+  const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
+      const response = await axios.post(`${API}${endpoint}`, formData);
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        onLogin(response.data.user);
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert(error.response?.data?.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  return (
+    <div className="app-container">
+      <div className="aurora-bg">
+        <div className="aurora-gradient aurora-1"></div>
+        <div className="aurora-gradient aurora-2"></div>
+        <div className="aurora-gradient aurora-3"></div>
+      </div>
+      
+      <div className="auth-container">
+        <div className="auth-card">
+          <button className="back-button" onClick={onBack}>
+            ← Back
+          </button>
+          
+          <div className="auth-header">
+            <h2 className="auth-title">
+              {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+            </h2>
+            <p className="auth-subtitle">
+              {mode === 'login' 
+                ? 'Sign in to access your productivity dashboard' 
+                : 'Join thousands of productive users'
+              }
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {mode === 'register' && (
+              <div className="form-group">
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name || ''}
+                  onChange={handleChange}
+                  required
+                  className="form-input"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            )}
+            
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your email"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your password"
+                minLength={6}
+              />
+            </div>
+
+            <button type="submit" className="auth-submit-button" disabled={loading}>
+              {loading ? (
+                <span className="loading-spinner">⏳</span>
+              ) : (
+                <span>{mode === 'login' ? 'Sign In' : 'Create Account'}</span>
+              )}
+              <div className="button-glow"></div>
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <p>
+              {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+              <button 
+                className="link-button"
+                onClick={() => window.location.reload()}
+              >
+                {mode === 'login' ? 'Sign Up' : 'Sign In'}
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Dashboard Component
 function Dashboard({ user, onLogout }) {
@@ -90,8 +222,6 @@ function Dashboard({ user, onLogout }) {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
   const [loading, setLoading] = useState(false);
-  const [analyticsData, setAnalyticsData] = useState(null);
-  const [fetchingAnalytics, setFetchingAnalytics] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [fetchingTasks, setFetchingTasks] = useState(false);
 
@@ -113,23 +243,6 @@ function Dashboard({ user, onLogout }) {
     };
     fetchTasks();
   }, [user]);
-
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      if (activeTab !== 'analytics' || !user) return;
-      setFetchingAnalytics(true);
-      try {
-        const response = await fetchAnalyticsOverview();
-        setAnalyticsData(response.data);
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-        alert('Failed to fetch analytics data');
-      } finally {
-        setFetchingAnalytics(false);
-      }
-    };
-    fetchAnalytics();
-  }, [activeTab, user]);
 
   const addTask = async (e) => {
     e.preventDefault();
@@ -243,44 +356,45 @@ function Dashboard({ user, onLogout }) {
 
               {/* Tasks List */}
               <div className="tasks-grid">
-              {tasks.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">📋</div>
-                  <h3>No tasks yet</h3>
-                  <p>Add your first task to get started with AI-powered productivity!</p>
-                </div>
-              ) : (
-                tasks.map(task => (
-                  <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''}`}>
-                    <div className="task-content">
-                      <button
-                        className="task-checkbox"
-                        onClick={() => toggleTask(task.id, task.completed)}
-                      >
-                        {task.completed ? '✅' : '⏳'}
-                      </button>
-                      <div className="task-details">
-                        <h4 className="task-title">{task.title}</h4>
-                        <p className="task-meta">
-                          Created: {new Date(task.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="task-ai-suggestion">
-                      <div className="dropdown-container">
-                        <button className="dropdown-toggle" onClick={() => setIsOpen(!isOpen)}>
-                          💡 AI Suggestions {isOpen ? '▲' : '▼'}
+                {tasks.length === 0 ? (
+                  <div className="empty-state">
+                    <div className="empty-icon">📋</div>
+                    <h3>No tasks yet</h3>
+                    <p>Add your first task to get started with AI-powered productivity!</p>
+                  </div>
+                ) : (
+                  tasks.map(task => (
+                    <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''}`}>
+                      <div className="task-content">
+                        <button
+                          className="task-checkbox"
+                          onClick={() => toggleTask(task.id, task.completed)}
+                        >
+                          {task.completed ? '✅' : '⏳'}
                         </button>
-                        {isOpen && (
-                          <ul className="dropdown-list">
-                            {/* TODO: Define suggestions array or replace with actual data */}
-                            <li className="dropdown-item">Suggestion 1</li>
-                            <li className="dropdown-item">Suggestion 2</li>
-                            <li className="dropdown-item">Suggestion 3</li>
-                          </ul>
-                        )}
+                        <div className="task-details">
+                          <h4 className="task-title">{task.title}</h4>
+                          <p className="task-meta">
+                            Created: {new Date(task.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                      <div className="task-ai-suggestion">
+                        <div className="dropdown-container">
+                          <button className="dropdown-toggle" onClick={() => setIsOpen(!isOpen)}>
+                            💡 AI Suggestions {isOpen ? '▲' : '▼'}
+                          </button>
+                          {isOpen && (
+                            <ul className="dropdown-list">
+                              {suggestions.map((suggestion, index) => (
+                                <li key={index} className="dropdown-item">
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
                   </div>
                 ))
               )}
@@ -295,62 +409,58 @@ function Dashboard({ user, onLogout }) {
            )}
           {activeTab === 'analytics' && (
             <div className="analytics-section">
-              {fetchingAnalytics ? (
-                <p>Loading analytics data...</p>
-              ) : analyticsData ? (
-                <>
-                  <div className="stats-grid">
-                    <div className="stat-card">
-                      <div className="stat-icon">📊</div>
-                      <div className="stat-content">
-                        <h3>{analyticsData.total_tasks}</h3>
-                        <p>Total Tasks</p>
-                      </div>
-                    </div>
-                    <div className="stat-card">
-                      <div className="stat-icon">✅</div>
-                      <div className="stat-content">
-                        <h3>{analyticsData.completed_tasks}</h3>
-                        <p>Completed</p>
-                      </div>
-                    </div>
-                    <div className="stat-card">
-                      <div className="stat-icon">⏳</div>
-                      <div className="stat-content">
-                        <h3>{analyticsData.pending_tasks}</h3>
-                        <p>Pending</p>
-                      </div>
-                    </div>
-                    <div className="stat-card">
-                      <div className="stat-icon">🎯</div>
-                      <div className="stat-content">
-                        <h3>{analyticsData.completionRate ?? Math.round((analyticsData.completed_tasks / analyticsData.total_tasks) * 100)}%</h3>
-                        <p>Completion Rate</p>
-                      </div>
-                    </div>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon">📊</div>
+                  <div className="stat-content">
+                    <h3>{stats.total}</h3>
+                    <p>Total Tasks</p>
                   </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">✅</div>
+                  <div className="stat-content">
+                    <h3>{stats.completed}</h3>
+                    <p>Completed</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">⏳</div>
+                  <div className="stat-content">
+                    <h3>{stats.pending}</h3>
+                    <p>Pending</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">🎯</div>
+                  <div className="stat-content">
+                    <h3>{stats.completionRate}%</h3>
+                    <p>Completion Rate</p>
+                  </div>
+                </div>
+              </div>
 
-                  <div className="analytics-charts">
-                    <div className="chart-card">
-                      <h3>📈 Productivity Trends</h3>
-                      <div className="chart-placeholder">
-                        <div className="chart-bars">
-                          {Object.entries(analyticsData.weekly_task_distribution).map(([date, count]) => (
-                            <div key={date} className="bar" style={{ height: `${(count / Math.max(...Object.values(analyticsData.weekly_task_distribution))) * 100}%` }}></div>
-                          ))}
-                        </div>
-                        <p>Weekly productivity overview</p>
-                      </div>
+              <div className="analytics-charts">
+                <div className="chart-card">
+                  <h3>📈 Productivity Trends</h3>
+                  <div className="chart-placeholder">
+                    <div className="chart-bars">
+                      <div className="bar" style={{height: '60%'}}></div>
+                      <div className="bar" style={{height: '80%'}}></div>
+                      <div className="bar" style={{height: '45%'}}></div>
+                      <div className="bar" style={{height: '90%'}}></div>
+                      <div className="bar" style={{height: '75%'}}></div>
+                      <div className="bar" style={{height: '85%'}}></div>
+                      <div className="bar" style={{height: '70%'}}></div>
                     </div>
+                    <p>Weekly productivity overview</p>
                   </div>
-                </>
-              ) : (
-                <p>No analytics data available.</p>
-              )}
+                </div>
+              </div>
             </div>
           )}
         </main>
-
+      </div>
     </div>
   );
 }
@@ -384,7 +494,7 @@ function App() {
   return (
     <>
       {view === 'landing' && <LandingPage onShowAuth={handleShowAuth} />}
-      {view === 'auth' && <Login mode={authMode} onBack={handleBack} onLogin={handleLogin} />}
+      {view === 'auth' && <AuthForm mode={authMode} onBack={handleBack} onLogin={handleLogin} />}
       {view === 'dashboard' && user && <Dashboard user={user} onLogout={handleLogout} />}
     </>
   );
