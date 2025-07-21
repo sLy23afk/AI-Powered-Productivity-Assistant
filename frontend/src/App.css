@@ -13,12 +13,12 @@
 
 /* Aurora Background Container */
 .app-container {
-  position: relative;
+  position: absolute;
   width: 100%;
   top: 0%;
   align-items: center;
   background: linear-gradient(135deg, #f0f4ff 0%, #e8f2ff 25%, #f8faff 50%, #e6f0ff 75%, #f2f6ff 100%);
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 /* Aurora Gradient Effects */
