@@ -6,7 +6,7 @@ import unittest
 load_dotenv()
 
 print("Loading environment variables from .env file...")
-print("GEMINI_API_KEY:", os.getenv("GEMINI_API_KEY"))
+# API key is loaded from environment variables (not displayed for security)
 
 def run_tests():
     project_root = os.path.dirname(os.path.abspath(__file__))

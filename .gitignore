@@ -36,10 +36,23 @@ dist/
 
 # Flask/Secrets
 *.env
+*.env.local
+*.env.production
+*.env.development
 *.key
+*.secret
+*.token
 instance/
 config.py
+config.py.backup
+secrets.json
+credentials.json
+service-account.json
+=======
 
 # OS junk
 Thumbs.db
 .DS_Store
+
+
+structure.txt

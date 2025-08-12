@@ -1,6 +1,12 @@
 import requests
-# This script uploads a list of tasks to a task management API.
+import os
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
+
+# This script uploads a list of tasks to a task management API.
+# IMPORTANT: Set your JWT token in .env file as JWT_TOKEN=your_token_here
 
 tasks = [
     "Write blog on machine learning trends",
@@ -12,14 +18,22 @@ tasks = [
     "Draft introduction for final thesis"
 ]
 
-JWT_TOKEN = "your_jwt_token_here"
-headers = {"Authorization": f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MDMwMjYwNSwianRpIjoiNTUxZWM3NWUtNTg3MC00MThiLWJkYjctZWU0MGM5ZmNhMDNhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTAzMDI2MDUsImNzcmYiOiI4NjI3NWVkOS1lNmViLTQxYTUtYTk1Mi03NjYxY2U2Y2QzYWIiLCJleHAiOjE3NTAzMDM1MDV9.0IshImW1kSGg4tKeyzYRx1nrhYkdcb7nNqN6phao9D8",
-           "content-type": "application/json"}
+# Get JWT token from environment variable
+JWT_TOKEN = os.getenv('JWT_TOKEN')
+if not JWT_TOKEN:
+    raise ValueError("JWT_TOKEN environment variable is required. Set it in your .env file.")
+
+headers = {
+    "Authorization": f"Bearer {JWT_TOKEN}",
+    "content-type": "application/json"
+}
 URL = "http://localhost:5000/tasks/"
 
 for title in tasks:
-    data = {"title": title,
-            "status": "pending",}
+    data = {
+        "title": title,
+        "status": "pending"
+    }
     
     response = requests.post(URL, json=data, headers=headers)
     print(f"Task: {title}")

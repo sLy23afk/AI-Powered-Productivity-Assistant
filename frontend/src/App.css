@@ -98,6 +98,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-backdrop-filter: blur(1px);
   backdrop-filter: blur(1px);
 }
 
@@ -203,6 +204,7 @@
 
 .feature-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -281,6 +283,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  -webkit-user-select: none;
   user-select: none;
   transition: background-color 0.3s ease;
 }
@@ -407,6 +410,7 @@
 
 .auth-card {
   background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 24px;
@@ -484,6 +488,7 @@
   border-radius: 12px;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
 }
@@ -551,6 +556,7 @@
 
 .dashboard-header {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -633,6 +639,7 @@
 
 .add-task-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -661,6 +668,7 @@
   border-radius: 12px;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
 }
@@ -703,6 +711,7 @@
   text-align: center;
   padding: 4rem 2rem;
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -728,6 +737,7 @@
 
 .task-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
@@ -801,16 +811,18 @@
 }
 
 .calendar-design {
- color:#059669;
- display: grid;
- backdrop-filter: blur(20px);
- flex: wrap;
- padding: 2rem;
- animation: pulse 2 sec; 
-
+  color: #059669;
+  display: grid;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  flex-wrap: wrap;
+  padding: 2rem;
+  animation: pulse 2s ease-in-out infinite;
 }
+
 .calendar-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -864,6 +876,7 @@
 
 .stat-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
@@ -903,6 +916,7 @@
 
 .chart-card {
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;

@@ -44,7 +44,7 @@ class TaskCreateSchema(Schema):
     due_date = fields.DateTime(required=False)
     status = fields.Str(load_default='pending')
     priority = fields.Integer(required=False)
-
+    
 class TaskUpdateSchema(Schema):
     title = fields.Str()
     due_date = fields.DateTime(required=False)
