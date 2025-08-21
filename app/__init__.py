@@ -21,7 +21,7 @@ def create_app():
     app.config['API_TITLE'] = 'AI Productivity Assistant API'
     app.config['API_VERSION'] = 'v1'
     app.config['OPENAPI_VERSION'] = '3.0.3'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    # SQLALCHEMY_DATABASE_URI is already set in Config class
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['OPENAPI_URL_PREFIX'] = '/docs'   # URL path for OpenAPI docs
     app.config['OPENAPI_SWAGGER_UI_PATH'] = '/api'  # Swagger UI path

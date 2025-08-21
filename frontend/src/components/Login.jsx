@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
-const API = `${BACKEND_URL}/api`;
+const API = `${BACKEND_URL}`;
 
 function Login({ setToken }) {
   const [email, setEmail] = useState("");
