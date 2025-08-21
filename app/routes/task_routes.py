@@ -10,6 +10,7 @@ from app.utils.local_suggester import get_local_suggestions
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.content_recommender import recommend_similar_tasks
 from app.utils.recommendation_engine import build_user_task_matrix, get_similar_tasks
+from datetime import datetime
 
 blp = Blueprint("tasks", "tasks", url_prefix="/tasks", description="Operations on tasks")
 
@@ -65,6 +66,7 @@ class TasksList(MethodView):
             now = datetime.now()
             if due_date - now <= timedelta(days=1):
                 status = "urgent"
+        created_at = task_data.get("created_at", datetime.now())
         # Create Task object
         new_task = Task(
             title=task_title,
@@ -73,6 +75,7 @@ class TasksList(MethodView):
             priority=priority,
             suggestions = suggestions,
             complimentary_tasks = complimentary_tasks,
+            created_at = created_at,
             user_id = user_id
         )
          
@@ -136,6 +139,7 @@ class TaskDetail(MethodView):
         task.title = task_data.get("title", task.title)
         task.due_date = task_data.get("due_date", task.due_date)
         task.status = task_data.get("status", task.status)
+        task.created_at = task_data.get("created_at", task.created_at)  
         try:
             db.session.commit()
         except SQLAlchemyError:

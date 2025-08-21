@@ -32,6 +32,9 @@ class Task(db.Model):
             "due_date": self.due_date,
             "status": self.status,
             "user_id": self.user_id,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
+            "priority": self.priority,
         }
 
 class User(db.Model):

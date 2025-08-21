@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
-import TaskCalendar from "./components/TaskCalendar"
+import GlassCalendarFullScreen from "./components/TaskCalendar"
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 const API = `${BACKEND_URL}`;
@@ -44,7 +44,7 @@ function LandingPage({ onShowAuth, user, setView }) {
               <h3>AI Task Analysis</h3>
               <p>Smart suggestions and insights for your tasks</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card" onClick={() => setView('calendar')}>
               <div className="feature-icon">📅</div>
               <h3>Smart Scheduling</h3>
               <p>Intelligent calendar integration and planning</p>
@@ -266,8 +266,8 @@ function TAnalysis({user, onLogout, setView}) {
         { title: newTask },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      const { id, title, due_date, priority, status } = response.data;
-      const filteredTask = { id, title, due_date, priority, status };
+      const { id, title, due_date, priority, status, created_at } = response.data;
+      const filteredTask = { id, title, due_date, priority, status, created_at};
       setTasks((prev) => [filteredTask, ...prev]);
       setNewTask("");
     } catch (error) {
@@ -395,6 +395,39 @@ function TAnalysis({user, onLogout, setView}) {
     </div>
   );
 }
+// calendar Component
+function CalendarIn({ user, onLogout, setView}) {
+  return (
+    <div className="app-container" style={{ overflowY: "auto" }}>
+      <div className="aurora-bg">
+        <div className="aurora-gradient aurora-1"></div>
+        <div className="aurora-gradient aurora-2"></div>
+        <div className="aurora-gradient aurora-3"></div>
+        <div className="aurora-gradient aurora-4"></div>
+      </div>
+
+      <div className="dashboard-container" style={{top: "0", left: "0" }}>
+        {/* Header */}
+        <header className="dashboard-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <button className="tab-button" onClick={() => setView("landing")}>
+            ← Back to Home
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <h1 className="dashboard-title">Hello, {user.username}!</h1>
+            <button className="logout-button" onClick={onLogout}>
+              Logout
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <div style={{
+          color:"#0000" }}> <GlassCalendarFullScreen />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Dashboard Component
 function Dashboard({ user, onLogout, setView }) {
@@ -474,12 +507,6 @@ function Dashboard({ user, onLogout, setView }) {
 
         {/* Main Content */}
         <main className="dashboard-main">
-          {activeTab === "calendar" && (
-            <div className="calendar-section">
-              <TaskCalendar />
-            </div>
-          )}
-
           {activeTab === "analytics" && (
             <div className="analytics-section">
               {loadingStats ? (
@@ -595,6 +622,7 @@ function App() {
       {view === 'auth' && <AuthForm mode={authMode} onBack={handleBack} onLogin={handleLogin} onSwitchMode={handleShowAuth} />}
       {view === 'dashboard' && user && <Dashboard user={user} onLogout={handleLogout} setView={setView} />}
       {view == 'tanalysis' && user && <TAnalysis user={user} onLogout={handleLogout} setView={setView} />}
+      {view == 'calendar' && user && <CalendarIn user={user} onLogout={handleLogout} setView={setView} />}
     </>
   );
 }

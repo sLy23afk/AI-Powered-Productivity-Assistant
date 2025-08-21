@@ -817,7 +817,6 @@
   backdrop-filter: blur(20px);
   flex-wrap: wrap;
   padding: 2rem;
-  animation: pulse 2s ease-in-out infinite;
 }
 
 .calendar-card {

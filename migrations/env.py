@@ -1,8 +1,9 @@
 import logging
 from logging.config import fileConfig
-
+from app import db
+target_metadata = db.metadata
 from flask import current_app
-
+from app.models import Task, User
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -47,8 +48,12 @@ target_db = current_app.extensions['migrate'].db
 
 def get_metadata():
     if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
-    return target_db.metadata
+        md = target_db.metadatas.get(None)
+        print("Using metadata from target_db.metadatas[None]:", md.tables.keys())
+        return md
+    md = target_db.metadata
+    print("Using metadata from target_db.metadata:", md.tables.keys())
+    return md
 
 
 def run_migrations_offline():

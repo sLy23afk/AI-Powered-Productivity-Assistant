@@ -10,8 +10,9 @@ class TaskSchema(Schema):
     priority = fields.Integer(dump_only = True)  # Added priority field to output schema
     suggestions = fields.List(fields.Str(), dump_only=True)  # Added suggestions field for output
     complimentary_tasks = fields.List(fields.String(), dump_only=True)
-
-    
+    created_at = fields.DateTime(dump_only=True)
+    completed_at = fields.DateTime(dump_only=True)  # Nullable for pending tasks
+   
     def serialize_due_date(self, obj):
         """
         Custom serializer for due_date field.
@@ -44,6 +45,7 @@ class TaskCreateSchema(Schema):
     due_date = fields.DateTime(required=False)
     status = fields.Str(load_default='pending')
     priority = fields.Integer(required=False)
+    created_at = fields.DateTime(dump_only=True)
     
 class TaskUpdateSchema(Schema):
     title = fields.Str()
