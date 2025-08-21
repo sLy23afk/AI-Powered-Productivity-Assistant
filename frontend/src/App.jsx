@@ -422,7 +422,7 @@ function CalendarIn({ user, onLogout, setView}) {
 
         {/* Main Content */}
         <div style={{
-          color:"#0000" }}> <GlassCalendarFullScreen />
+          color: "#000000" }}> <GlassCalendarFullScreen />
         </div>
       </div>
     </div>

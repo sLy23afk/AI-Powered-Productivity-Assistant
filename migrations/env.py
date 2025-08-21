@@ -49,10 +49,10 @@ target_db = current_app.extensions['migrate'].db
 def get_metadata():
     if hasattr(target_db, 'metadatas'):
         md = target_db.metadatas.get(None)
-        print("Using metadata from target_db.metadatas[None]:", md.tables.keys())
+        logger.debug("Using metadata from target_db.metadatas[None]: %s", list(md.tables.keys()))
         return md
     md = target_db.metadata
-    print("Using metadata from target_db.metadata:", md.tables.keys())
+    logger.debug("Using metadata from target_db.metadata: %s", list(md.tables.keys()))
     return md
 
 
