@@ -26,7 +26,7 @@ const ScrollbarHide = () => (
   `}</style>
 );
 
-const GlassCalendarFullScreen = () => {
+const GlassCalendarFullScreen = ({setView}) => {
   const [tasks, setTasks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [tasksForDate, setTasksForDate] = useState([]);
@@ -53,6 +53,7 @@ const GlassCalendarFullScreen = () => {
     return days;
   }, [currentMonth, selectedDate]);
 
+  
   const eventsForDate = (date) => {
     return tasks.filter(
       (task) => new Date(task.due_date).toDateString() === date.toDateString()
@@ -100,6 +101,7 @@ const GlassCalendarFullScreen = () => {
     setModalOpen(true);
   };
 
+
   return (
     <div
       style={{
@@ -119,13 +121,29 @@ const GlassCalendarFullScreen = () => {
       {/* Header */}
       <header
         style={{
-          padding: "1.2rem 2rem",
+          padding: "1.7rem 2rem",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           borderBottom: "1px solid rgba(255,255,255,0.2)",
         }}
       >
+        <button
+          className="tab-button"
+          onClick={() => setView("landing")}
+          style={{
+            marginRight: "1rem",
+            background: "rgba(0,0,0,0.15)",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          ← Back to Home
+        </button>
         {/* Month nav */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <button

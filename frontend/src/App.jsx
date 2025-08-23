@@ -227,11 +227,14 @@ function AuthForm({ mode, onBack, onLogin, onSwitchMode }) {
 }
 
 //Task-Analysis Component
-function TAnalysis({user, onLogout, setView}) {
+function TAnalysis({ user, onLogout, setView }) {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetchingTasks, setFetchingTasks] = useState(false);
+  const [openSuggestionTaskId, setOpenSuggestionTaskId] = useState(null);
+
+  const API = "http://localhost:5000"; // Replace with your actual backend URL
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -266,9 +269,9 @@ function TAnalysis({user, onLogout, setView}) {
         { title: newTask },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      const { id, title, due_date, priority, status, created_at } = response.data;
-      const filteredTask = { id, title, due_date, priority, status, created_at};
-      setTasks((prev) => [filteredTask, ...prev]);
+      const { id, title, due_date, priority, status, created_at, suggestions } = response.data;
+      const newTaskObj = { id, title, due_date, priority, status, created_at, suggestions, complimentary_tasks };
+      setTasks((prev) => [newTaskObj, ...prev]);
       setNewTask("");
     } catch (error) {
       console.error("Error adding task:", error);
@@ -293,6 +296,10 @@ function TAnalysis({user, onLogout, setView}) {
     } catch (error) {
       console.error("Error updating task:", error);
     }
+  };
+  
+  const toggleSuggestions = (taskId) => {
+    setOpenSuggestionTaskId(openSuggestionTaskId === taskId ? null : taskId);
   };
 
   return (
@@ -327,7 +334,9 @@ function TAnalysis({user, onLogout, setView}) {
             className="dashboard-nav"
             style={{ display: "flex", alignItems: "center", gap: "1rem" }}
           >
-            <h1 className="dashboard-title" style= {{alignItems:"center"}}>Welcome back, {user.username}!</h1>
+            <h1 className="dashboard-title" style={{ alignItems: "center" }}>
+              Welcome back, {user.username}!
+            </h1>
             <button className="logout-button" onClick={onLogout}>
               Logout
             </button>
@@ -349,7 +358,12 @@ function TAnalysis({user, onLogout, setView}) {
                   className="task-input"
                   disabled={loading}
                 />
-                <button type="submit" className="add-task-button" disabled={loading}>
+                <button
+                  type="submit"
+                  className="add-task-button"
+                  disabled={loading}
+                  aria-label="Add Task"
+                >
                   {loading ? "⏳" : "➕"} Add Task
                 </button>
               </form>
@@ -375,6 +389,7 @@ function TAnalysis({user, onLogout, setView}) {
                       <button
                         className="task-checkbox"
                         onClick={() => toggleTask(task.id, task.completed)}
+                        aria-label={`Mark task ${task.completed ? "incomplete" : "complete"}`}
                       >
                         {task.completed ? "✅" : "⏳"}
                       </button>
@@ -383,6 +398,39 @@ function TAnalysis({user, onLogout, setView}) {
                         <p className="task-meta">
                           Created: {new Date(task.created_at).toLocaleDateString()}
                         </p>
+
+                        {/* AI Suggestions toggle button */}
+                        <button
+                          className="ai-suggestions-toggle"
+                          onClick={() => toggleSuggestions(task.id)}
+                          aria-expanded={openSuggestionTaskId === task.id}
+                          aria-controls={`ai-suggestions-${task.id}`}
+                          style={{ marginTop: "0.5rem", cursor: "pointer" }}
+                        >
+                          {openSuggestionTaskId === task.id ? "Hide AI Suggestions ▲" : "Show AI Suggestions ▼"}
+                        </button>
+
+                        {/* AI Suggestions dropdown */}
+                        {openSuggestionTaskId === task.id && task.suggestions && task.suggestions.length > 0 && (
+                          <ul
+                            id={`ai-suggestions-${task.id}`}
+                            className="ai-suggestions-list"
+                            style={{ marginTop: "0.5rem", color: "#666" }}
+                          >
+                            {task.suggestions.map((suggestion, index) => (
+                              <li key={index} style={{ marginBottom: "0.25rem" }}>
+                                {suggestion}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        {/* If no suggestions */}
+                        {openSuggestionTaskId === task.id && (!task.suggestions || task.suggestions.length === 0) && (
+                          <p style={{ marginTop: "0.5rem", color: "#999", fontStyle: "italic" }}>
+                            No AI suggestions available.
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -395,6 +443,7 @@ function TAnalysis({user, onLogout, setView}) {
     </div>
   );
 }
+
 // calendar Component
 function CalendarIn({ user, onLogout, setView}) {
   return (
@@ -422,7 +471,7 @@ function CalendarIn({ user, onLogout, setView}) {
 
         {/* Main Content */}
         <div style={{
-          color: "#000000" }}> <GlassCalendarFullScreen />
+          color: "#000000" }}> <GlassCalendarFullScreen setView={setView} />
         </div>
       </div>
     </div>
